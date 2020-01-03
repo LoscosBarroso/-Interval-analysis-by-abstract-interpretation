@@ -1,5 +1,5 @@
 :-module(_,_,[]).
-
+   
 :- use_module(tests).
 :- use_module(lexer).
 :- use_module(parser).
@@ -12,30 +12,23 @@
 :- use_module(library(pathnames)).
 :- use_module(engine(runtime_control)).
 
+
 %The lexer and parser modules were edited from the versions at
 %http://faculty.cooper.edu/smyth/cs225/ch7/prolog.htm
 
-/*main([File]):-
-    working_directory(CWD,CWD),
-    directory_files(CWD,Files),
-    member(File,Files),
-    atom_concat(_,'.w',File),
-    path_concat(CWD,File,F),
-    file_to_string(F,Code),
-    lex(Code,TokenList),
-    ast(TokenList,AST),
-    ast_to_cfg(AST,CFG,CFGHead,CFGEnds),
-    interval_analysis(CFG,ICFG),
-    constant_propagatopn(ICFG,CCFG).
-*/
 
+%To run this module just load it into a ciao interpreter and type:
 
-test(Z,AST,CFG,CFGSize,CFGHead,CFGEnds,KCFG,Fixpoint,N):-
-    test7(Input),
-    format("~s",[Input]),
-    lex(Input,Z),
-    ast(Z,AST),
-    ast_to_cfg(AST,CFG,CFGSize,CFGHead,CFGEnds),
-    kleenitialize(CFG,KCFG),
-    kleeniteration(KCFG,Fixpoint,0,N).
-                                                   
+% run(TokenList,AST,CFG,CFGSize,CFGHead,CFGEnds,_,Fixpoint,NumIterations,_,FixpointWithWidening,NumIterationsWithWidening).
+
+run(Z,AST,CFG,CFGSize,CFGHead,CFGEnds,KCFG,Fixpoint,N,WKCFG,WFixpoint,WN):-
+    test7(Input), %go to tests.pl and choose which example code to run (you can also write your own).
+    format("~s",[Input]), %prints the while program to analyze
+    lex(Input,Z), %lexical analysis
+    ast(Z,AST), %AST construction
+    ast_to_cfg(AST,CFG,CFGSize,CFGHead,CFGEnds), %CFG construction
+    kleenitialize(CFG,KCFG), %Abstract intrpretation without widening
+    kleeniteration(KCFG,Fixpoint,0,N,20),
+    kleenitializew(CFG,WKCFG), %Abstrct interpretation with widening
+    kleeniterationw(WKCFG,WFixpoint,0,WN).
+
