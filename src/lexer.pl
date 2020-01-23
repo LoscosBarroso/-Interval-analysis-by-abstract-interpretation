@@ -15,32 +15,32 @@ tokens(Z) --> ";",!, tokens(Y), {Z = [';' | Y]}.
 
 % Return a unique token for each control structure keyword in the form of
 % a Prolog atom whose name literally matches the keyword.
-tokens(Z) --> [C],"while", {sep(C)},!, tokens(Y), {Z = [while | Y]}.
-tokens(Z) --> [C],"do", {sep(C)},!, tokens(Y), {Z = [do | Y]}.
-tokens(Z) --> [C],"end", {sep(C)},!, tokens(Y), {Z = [end | Y]}.
-tokens(Z) --> [C],"if", {sep(C)},!, tokens(Y), {Z = [if | Y]}.
-tokens(Z) --> [C],"then", {sep(C)},!, tokens(Y), {Z = [then | Y]}.
-tokens(Z) --> [C],"else", {sep(C)},!, tokens(Y), {Z = [else | Y]}.
-tokens(Z) --> [C],"skip", {sep(C)},!, tokens(Y), {Z = [skip | Y]}.
+tokens(Z) --> [C], "while", {sep(C)},!, tokens(Y), {Z = [while | Y]}.
+tokens(Z) --> [C], "do"   , {sep(C)},!, tokens(Y), {Z = [do | Y]}.
+tokens(Z) --> [C], "end"  , {sep(C)},!, tokens(Y), {Z = [end | Y]}.
+tokens(Z) --> [C], "if"   , {sep(C)},!, tokens(Y), {Z = [if | Y]}.
+tokens(Z) --> [C], "then" , {sep(C)},!, tokens(Y), {Z = [then | Y]}.
+tokens(Z) --> [C], "else" , {sep(C)},!, tokens(Y), {Z = [else | Y]}.
+tokens(Z) --> [C], "skip" , {sep(C)},!, tokens(Y), {Z = [skip | Y]}.
 
 % Comparison operators.
 tokens(Z) --> "==",!, tokens(Y), {Z = [== | Y]}.
 tokens(Z) --> "!=",!, tokens(Y), {Z = ['!=' | Y]}.
 tokens(Z) --> ">=",!, tokens(Y), {Z = [>= | Y]}.
 tokens(Z) --> "<=",!, tokens(Y), {Z = [<= | Y]}.
-tokens(Z) --> ">",!, tokens(Y), {Z = [> | Y]}.
-tokens(Z) --> "<",!, tokens(Y), {Z = [< | Y]}.
+tokens(Z) --> ">" ,!, tokens(Y), {Z = [> | Y]}.
+tokens(Z) --> "<" ,!, tokens(Y), {Z = [< | Y]}.
 
 % Assignment operator.
 tokens(Z) --> ":=",!, tokens(Y), {Z = [:= | Y]}.  
 
 % Boolean constants and operators.
-tokens(Z) --> [C],"true", {sep(C)},!, tokens(Y), {Z = [true | Y]}.  
-tokens(Z) --> [C],"false", {sep(C)},!, tokens(Y), {Z = [false | Y]}.
-tokens(Z) --> [C],"and", {sep(C)},!, tokens(Y), {Z = [and | Y]}.  
-tokens(Z) --> [C],"or", {sep(C)},!, tokens(Y), {Z = [or | Y]}.
-tokens(Z) --> [C],"not", {sep(C)},!, tokens(Y), {Z = [not | Y]}.  
-tokens(Z) --> [C],"xor", {sep(C)},!, tokens(Y), {Z = [xor | Y]}.
+tokens(Z) --> [C], "true" , {sep(C)},!, tokens(Y), {Z = [true | Y]}.  
+tokens(Z) --> [C], "false", {sep(C)},!, tokens(Y), {Z = [false | Y]}.
+tokens(Z) --> [C], "and"  , {sep(C)},!, tokens(Y), {Z = [and | Y]}.  
+tokens(Z) --> [C], "or"   , {sep(C)},!, tokens(Y), {Z = [or | Y]}.
+tokens(Z) --> [C], "not"  , {sep(C)},!, tokens(Y), {Z = [not | Y]}.  
+tokens(Z) --> [C], "xor"  , {sep(C)},!, tokens(Y), {Z = [xor | Y]}.
 
 % Numeral constants and operators.
 tokens(Z) --> "+",!, tokens(Y), {Z = ['+' | Y]}.  
@@ -53,7 +53,7 @@ tokens(Z) --> "(",!, tokens(Y), {Z = ['(' | Y]}.
 tokens(Z) --> ")",!, tokens(Y), {Z = [')' | Y]}.
 
 % Strip spaces, tabs and newlines.
-tokens(Z) --> " ",!, tokens(Y), {Z = Y}.
+tokens(Z) --> " " ,!, tokens(Y), {Z = Y}.
 tokens(Z) --> "\t",!, tokens(Y), {Z = Y}.
 tokens(Z) --> "\n",!, tokens(Y), {Z = Y}.
 
@@ -64,7 +64,7 @@ tokens([]) --> \+ [_], !. %To match EOS
 
 %whatever not parsed previously is considered single character tokens, this should not happen though.
 tokens(Z) --> [C], tokens(Y), {name(X, [C]), Z = [X | Y]}.
-tokens(Z) --> [], {Z = []}.
+tokens(Z) --> [] , {Z = []}.
 
 build([A|As],B,C) :-
     build(As,B,C1),
@@ -73,7 +73,7 @@ build([],B,B).
 
 %Implementing the DCGs for identifiers and numbers:
 identifier(Z) --> [C],id2([C],Z).
-id2(X,[Xa]) --> " ",!, {name(Xa, X)}.
+id2(X,[Xa]) --> " " ,!, {name(Xa, X)}.
 id2(X,[Xa]) --> "\t",!, {name(Xa, X)}.
 id2(X,[Xa]) --> "\n",!, {name(Xa, X)}.
 id2(X,[Xa, ';']) --> ";",!, {name(Xa, X)}.
@@ -83,12 +83,12 @@ id2(X,[Xa, '*']) --> "*",!, {name(Xa, X)}.
 id2(X,[Xa, '/']) --> "/",!, {name(Xa, X)}.
 id2(X,[Xa, ')']) --> ")",!, {name(Xa, X)}.
 id2(X,[Xa, '(']) --> "(",!, {name(Xa, X)}.
+id2(X,[Xa, '<']) --> "<",!, {name(Xa, X)}.
+id2(X,[Xa, '>']) --> ">",!, {name(Xa, X)}.
 id2(X,[Xa, '==']) --> "==",!, {name(Xa, X)}.
 id2(X,[Xa, '!=']) --> "!=",!, {name(Xa, X)}.
 id2(X,[Xa, '>=']) --> ">=",!, {name(Xa, X)}.
 id2(X,[Xa, '<=']) --> "<=",!, {name(Xa, X)}.
-id2(X,[Xa, '>']) --> ">",!, {name(Xa, X)}.
-id2(X,[Xa, '<']) --> "<",!, {name(Xa, X)}.
 id2(X,[Xa, ':=']) --> ":=",!, {name(Xa, X)}.
 id2(X,Z) --> [C], {append(X,[C],X1)}, id2(X1,Z).
 id2(X,X) --> \+ [_], !. %To match EOS

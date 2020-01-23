@@ -100,50 +100,6 @@ abstractTransfer(assN(numVar(Name),numExp(NumExp)),VarIntList,[vVal(Name,Interva
 %After that is added we can begin with the implementation of the algorithm.
 %Note that we only keep track of the interval values at the entranace of a CFG block, not at the exit. The exit values are easily obtainable via the abstract interpretation function and therefore omited.
 
-/*kleenitialize([],[]).
-
-kleenitialize([b(N,Block,Next)|CFG],[b(N,Block,[],[],Next)|CFGV]):-
-    kleenitialize(CFG,CFGV).
-
-kleeniteration(CFGV,CFGV3,N,Count):-
-    iteration(CFGV,CFGV,CFGV1),
-    widening(CFGV1,CFGV2),
-    N1 is N+1,
-    kleeniteration2(CFGV,CFGV2,CFGV3,N1,Count).
-
-kleeniteration2(CFGV,CFGV1,CFGV1,N,N):- equal_wide_lists(CFGV,CFGV1),!.
-kleeniteration2(_,CFGV1,CFGV2,N,Count):- kleeniteration(CFGV1,CFGV2,N,Count).
-
-
-iteration(Ref,[],[b(0,Block,OldVarIntList,VarWideIntList,NextBlocks)]):-
-    member(b(0,Block,OldVarIntList,VarWideIntList,NextBlocks),Ref).
-iteration(Ref,[b(_,Block,VarIntList,_,NextBlocks)|CFG],CFGV1):-
-    iteration(Ref,CFG,CFGV),
-    abstractTransfer(Block,VarIntList,VarIntList1),
-    update(CFGV,Ref,NextBlocks,VarIntList1,CFGV1).
-
-update(CFGV,_,[],_,CFGV).
-update(CFGV,Ref,[N|Ns],VarIntList,CFGV2):-
-    member(b(N,Block,OldVarIntList,VarWideIntList,NextBlocks),CFGV),!, %Not the first time adding to that node.
-    delete(CFGV,b(N,Block,OldVarIntList,VarWideIntList,NextBlocks),CFGV1), %Delete old input intervals
-    updateVarInts(OldVarIntList,VarIntList,NewVarIntList), %Computing the union of input intervals.
-    update([b(N,Block,NewVarIntList,VarWideIntList,NextBlocks)|CFGV1],Ref,Ns,VarIntList,CFGV2).
-update(CFGV,Ref,[N|Ns],VarIntList,CFGV1):-
-    member(b(N,Block,_,VarWideIntList,NextBlocks),Ref),!,
-    update([b(N,Block,VarIntList,VarWideIntList,NextBlocks)|CFGV],Ref,Ns,VarIntList,CFGV1).
-
-updateVarInts([],[],[]).
-updateVarInts(VarIntList,[],VarIntList).
-updateVarInts([],VarIntList,VarIntList).
-updateVarInts([vVal(Name,I1)|OldVarIntList],VarIntList,[vVal(Name,I3)|NewVarIntList]):-
-    member(vVal(Name,I2),VarIntList),!,
-    delete(VarIntList,vVal(Name,I2),VarIntList1),
-    updateVarInts(OldVarIntList,VarIntList1,NewVarIntList),
-    uni(I1,I2,I3).
-updateVarInts([vVal(Name,I1)|OldVarIntList],VarIntList,[vVal(Name,I2)|NewVarIntList]):-
-    updateVarInts(OldVarIntList,VarIntList,NewVarIntList),
-    uni('mt',I1,I2).*/
-
 kleenitialize([],[]).
 
 kleenitialize([b(N,Block,Next)|CFG],[b(N,Block,[],Next)|CFGV]):-
@@ -209,21 +165,19 @@ w(i(WX,WY),i(X,Y),i(WX1,WY1)):-
     max(WY,Y,B),
     max_low(A,Ks,WX1,'-inf'),
     min_high(B,Ks,WY1).
-    %wmax_low(WX,X,Ks,WX1),
-    %wmin_high(WY,Y,Ks,WY1).
 
 kleenitializew([],[]).
 
-kleenitializew([b(N,Block,Next)|CFG],[b(N,Block,[],[],Next)|CFGV]):- %for this analysis we need to keep track of the regular (R) and the wide (W) interval states
+kleenitializew([b(N,Block,Next)|CFG],[b(N,Block,[],[],Next)|CFGV]):- %For this analysis we need to keep track of the regular (R) and the wide (W) interval states
     kleenitializew(CFG,CFGV).
 
 kleeniterationw(CFGV,CFGV3,N,Count):- % CFGV is at state R1,W1
     iterationw(CFGV,CFGV,CFGV1), % CFGV1 is at state R2 = F(W1),W1
-    widening(CFGV1,CFGV2),% CFGV2 is at state R2,W2 = widening(R2,W1)
+    widening(CFGV1,CFGV2), % CFGV2 is at state R2,W2 = widening(R2,W1)
     N1 is N+1,
     kleeniterationw2(CFGV,CFGV2,CFGV3,N1,Count).
 
-kleeniterationw2(CFGV,CFGV1,CFGV1,N,N):- equal_wide_lists(CFGV,CFGV1),!. %we only stop if a fixpoint is reached
+kleeniterationw2(CFGV,CFGV1,CFGV1,N,N):- equal_wide_lists(CFGV,CFGV1),!. %We only stop if a fixpoint is reached
 kleeniterationw2(_,CFGV1,CFGV2,N,Count):- kleeniterationw(CFGV1,CFGV2,N,Count).
 
 
@@ -372,5 +326,4 @@ wAll([vVal(Name,I)|VarIntList],VarWideIntList,[vVal(Name,WI1)|VarWideIntList1]):
 wAll([vVal(Name,I)|VarIntList],VarWideIntList,[vVal(Name,WI1)|VarWideIntList1]):-
     wAll(VarIntList,VarWideIntList,VarWideIntList1),
     w('mt',I,WI1).
-    
-    
+

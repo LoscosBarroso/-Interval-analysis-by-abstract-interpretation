@@ -92,7 +92,7 @@ resum(PrevAST,'-',TotalAST) --> mul(MulAST), ['+'], resum(sub(PrevAST,MulAST),'+
 resum(PrevAST,'+',TotalAST) --> mul(MulAST), ['-'], resum(plus(PrevAST,MulAST),'-',TotalAST).
 resum(PrevAST,'-',TotalAST) --> mul(MulAST), ['-'], resum(sub(PrevAST,MulAST),'-',TotalAST).
 resum(PrevAST,'+',plus(PrevAST,MulAST)) --> mul(MulAST).
-resum(PrevAST,'-',sub(PrevAST,MulAST)) --> mul(MulAST).
+resum(PrevAST,'-', sub(PrevAST,MulAST)) --> mul(MulAST).
 
 
 mul(TotalAST) --> ter(TerAST), ['*'], remul(TerAST,'*',TotalAST).
@@ -103,7 +103,7 @@ remul(PrevAST,'/',TotalAST) --> ter(TerAST), ['*'], remul(div(PrevAST,TerAST),'*
 remul(PrevAST,'*',TotalAST) --> ter(TerAST), ['/'], remul(times(PrevAST,TerAST),'/',TotalAST).
 remul(PrevAST,'/',TotalAST) --> ter(TerAST), ['/'], remul(div(PrevAST,TerAST),'/',TotalAST).
 remul(PrevAST,'*',times(PrevAST,TerAST)) --> ter(TerAST).
-remul(PrevAST,'/',div(PrevAST,TerAST)) --> ter(TerAST).
+remul(PrevAST,'/',  div(PrevAST,TerAST)) --> ter(TerAST).
 
 
 ter(neg(AST)) --> ['-'],!, ter(AST).
